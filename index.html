@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IRO - Issues Reporting Outlet</title>
+<style>
+:root{--indigo:#1c2f5a;--ochre:#e0a526;--bg:#f4f6f8;--ink:#1a1d24;--mute:#5b6577;--line:#cfd6e0;--ok:#1f7a4d;--bad:#b3261e}
+*{box-sizing:border-box}
+body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{background:var(--indigo);color:#fff;padding:20px 16px 0;border-bottom:6px solid var(--ochre)}
+.wrap{max-width:720px;margin:0 auto}
+h1{margin:0;font-size:1.7rem;letter-spacing:.5px}
+header p{margin:4px 0 14px;color:#c9d3ea;font-family:system-ui,sans-serif;font-size:.9rem}
+nav{display:flex;gap:4px}
+nav button{font:600 .95rem system-ui,sans-serif;background:transparent;color:#c9d3ea;border:0;padding:10px 16px;cursor:pointer;border-radius:6px 6px 0 0}
+nav button.on{background:var(--bg);color:var(--indigo)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--ochre);outline-offset:2px}
+main{padding:24px 16px 48px}
+section{display:none}section.on{display:block}
+h2{margin:0 0 6px;color:var(--indigo)}
+.hint{font-family:system-ui,sans-serif;color:var(--mute);font-size:.9rem;margin:0 0 18px}
+label{display:block;font:600 .9rem system-ui,sans-serif;margin:14px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;font:1rem system-ui,sans-serif;background:#fff}
+textarea{min-height:120px;resize:vertical}
+.chk{display:flex;gap:8px;align-items:center;margin-top:14px;font:.95rem system-ui,sans-serif}
+.chk input{width:auto}
+.btn{margin-top:20px;background:var(--indigo);color:#fff;border:0;padding:12px 22px;border-radius:6px;font:600 1rem system-ui,sans-serif;cursor:pointer}
+.btn.alt{background:#fff;color:var(--indigo);border:1px solid var(--indigo);margin-top:0;padding:6px 12px;font-size:.85rem}
+.msg{margin-top:16px;padding:12px;border-radius:6px;font-family:system-ui,sans-serif;display:none}
+.msg.ok{display:block;background:#e5f4ec;border-left:5px solid var(--ok)}
+.msg.err{display:block;background:#fbe9e7;border-left:5px solid var(--bad)}
+.code{font:700 1.3rem ui-monospace,monospace;letter-spacing:2px}
+.card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--indigo);border-radius:6px;padding:14px;margin-top:12px;font-family:system-ui,sans-serif}
+.card h3{margin:0 0 4px;font-size:1rem}
+.meta{color:var(--mute);font-size:.82rem}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.78rem;font-weight:700;background:#fff3d6;color:#7a5600}
+.badge.Resolved{background:#e5f4ec;color:var(--ok)}.badge.Reviewing{background:#e3e9f8;color:var(--indigo)}
+.row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.row select{width:auto}
+.empty{font-family:system-ui,sans-serif;color:var(--mute);margin-top:16px}
+@media (prefers-reduced-motion:no-preference){.msg{transition:opacity .2s}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>IRO</h1>
+<p>Issues Reporting Outlet for AAUA students and the Akungba, Iwaro, Etioro and Ayegunle communities</p>
+<nav role="tablist">
+<button class="on" data-tab="report">Report an issue</button>
+<button data-tab="track">Track a report</button>
+<button data-tab="admin">Mediator</button>
+</nav></div></header>
+<main><div class="wrap">
+
+<section id="report" class="on">
+<h2>Report an issue</h2>
+<p class="hint">Tell us what happened. You can stay anonymous. You will get a reference code to check progress.</p>
+<form id="rf" novalidate>
+<label for="who">I am a</label>
+<select id="who"><option value="">Select one</option><option>Student</option><option>Indigene</option></select>
+<label for="area">Community or area</label>
+<select id="area"><option value="">Select one</option><option>Akungba</option><option>Iwaro</option><option>Etioro</option><option>Ayegunle</option><option>Other</option></select>
+<label for="cat">Type of issue</label>
+<select id="cat"><option value="">Select one</option><option>Rent or landlord dispute</option><option>Theft</option><option>Harassment</option><option>Noise</option><option>Unfair pricing</option><option>Land or property dispute</option><option>Other</option></select>
+<label for="desc">What happened?</label>
+<textarea id="desc" maxlength="1000" placeholder="Describe the issue, where and when it happened."></textarea>
+<div class="chk"><input type="checkbox" id="anon" checked><label for="anon" style="margin:0;font-weight:400">Keep me anonymous</label></div>
+<div id="contactBox" style="display:none">
+<label for="contact">Phone or email (only the mediator sees this)</label>
+<input id="contact" type="text" maxlength="80">
+</div>
+<button class="btn" type="submit">Submit report</button>
+<div id="rmsg" class="msg" role="status"></div>
+</form>
+</section>
+
+<section id="track">
+<h2>Track a report</h2>
+<p class="hint">Enter the reference code you received when you submitted.</p>
+<label for="tcode">Reference code</label>
+<input id="tcode" maxlength="12" placeholder="IRO-XXXXXX">
+<button class="btn" id="tbtn">Check status</button>
+<div id="tout"></div>
+</section>
+
+<section id="admin">
+<h2>Mediator dashboard</h2>
+<p class="hint">For authorised mediators only. Demo password: <b>iro2026</b></p>
+<div id="login">
+<label for="pw">Password</label>
+<input id="pw" type="password">
+<button class="btn" id="lbtn">Sign in</button>
+<div id="lmsg" class="msg" role="status"></div>
+</div>
+<div id="panel" style="display:none">
+<div class="row"><label for="flt" style="margin:0">Show</label>
+<select id="flt"><option>All</option><option>Pending</option><option>Reviewing</option><option>Resolved</option></select>
+<button class="btn alt" id="out">Sign out</button></div>
+<div id="list"></div>
+</div>
+</section>
+
+</div></main>
+<script>
+(function(){
+var KEY='iro_reports',PASS='iro2026';
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return []}}
+function save(d){try{localStorage.setItem(KEY,JSON.stringify(d));return true}catch(e){return false}}
+function $(i){return document.getElementById(i)}
+function show(el,type,text){el.className='msg '+type;el.textContent=text}
+function code(){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return 'IRO-'+s}
+
+// tabs
+document.querySelectorAll('nav button').forEach(function(b){b.onclick=function(){
+document.querySelectorAll('nav button').forEach(function(x){x.classList.remove('on')});
+document.querySelectorAll('section').forEach(function(x){x.classList.remove('on')});
+b.classList.add('on');$(b.dataset.tab).classList.add('on')}});
+
+// report
+$('anon').onchange=function(){$('contactBox').style.display=this.checked?'none':'block'};
+$('rf').onsubmit=function(e){e.preventDefault();
+var m=$('rmsg'),who=$('who').value,area=$('area').value,cat=$('cat').value,desc=$('desc').value.trim(),anon=$('anon').checked,contact=$('contact').value.trim();
+if(!who||!area||!cat){return show(m,'err','Select who you are, your community and the type of issue.')}
+if(desc.length<20){return show(m,'err','Describe the issue in at least 20 characters.')}
+if(!anon&&!contact){return show(m,'err','Add a phone or email, or tick Keep me anonymous.')}
+var d=load(),c=code();
+d.push({code:c,who:who,area:area,cat:cat,desc:desc,contact:anon?'':contact,status:'Pending',date:new Date().toISOString()});
+if(!save(d)){return show(m,'err','Could not save the report. Check that browser storage is allowed.')}
+show(m,'ok','Report submitted. Your reference code is '+c+'. Save it to track progress.');
+$('rf').reset();$('contactBox').style.display='none'};
+
+// track
+$('tbtn').onclick=function(){var o=$('tout');o.textContent='';
+var v=$('tcode').value.trim().toUpperCase(),r=load().filter(function(x){return x.code===v})[0];
+if(!r){var p=document.createElement('p');p.className='empty';p.textContent='No report found for that code. Check the code and try again.';o.appendChild(p);return}
+o.appendChild(card(r,false))};
+
+// admin
+function card(r,adm){
+var c=document.createElement('div');c.className='card';
+var h=document.createElement('h3');h.textContent=r.cat+' ('+r.area+')';c.appendChild(h);
+var s=document.createElement('span');s.className='badge '+r.status;s.textContent=r.status;c.appendChild(s);
+var m=document.createElement('div');m.className='meta';m.textContent=r.code+' | '+r.who+' | '+new Date(r.date).toLocaleDateString();c.appendChild(m);
+if(adm){var p=document.createElement('p');p.textContent=r.desc;c.appendChild(p);
+var ct=document.createElement('div');ct.className='meta';ct.textContent='Contact: '+(r.contact||'Anonymous');c.appendChild(ct);
+var row=document.createElement('div');row.className='row';
+var sel=document.createElement('select');['Pending','Reviewing','Resolved'].forEach(function(o){var op=document.createElement('option');op.textContent=o;if(o===r.status)op.selected=true;sel.appendChild(op)});
+var b=document.createElement('button');b.className='btn alt';b.textContent='Update status';
+b.onclick=function(){var d=load();d.forEach(function(x){if(x.code===r.code)x.status=sel.value});save(d);render()};
+row.appendChild(sel);row.appendChild(b);c.appendChild(row)}
+return c}
+function render(){var l=$('list');l.textContent='';var f=$('flt').value,d=load().slice().reverse().filter(function(x){return f==='All'||x.status===f});
+if(!d.length){var p=document.createElement('p');p.className='empty';p.textContent='No reports to show yet.';l.appendChild(p);return}
+d.forEach(function(r){l.appendChild(card(r,true))})}
+$('lbtn').onclick=function(){if($('pw').value===PASS){$('login').style.display='none';$('panel').style.display='block';$('pw').value='';render()}else show($('lmsg'),'err','Wrong password. Try again.')};
+$('out').onclick=function(){$('panel').style.display='none';$('login').style.display='block';$('lmsg').className='msg'};
+$('flt').onchange=render;
+})();
+</script>
+</body>
+</html>
